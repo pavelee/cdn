@@ -1,0 +1,59 @@
+version: '3'
+services:
+  thumbor:
+    image: minimalcompact/thumbor
+    environment:
+      - THUMBOR_NUM_PROCESSES=4
+      - SECURITY_KEY=ALAMAKOTA
+      - ALLOW_UNSAFE_URL=False
+      - LOADER=thumbor.loaders.http_loader
+      # - LOG_LEVEL=debug
+      # - DETECTORS=['thumbor.detectors.queued_detector.queued_complete_detector']
+      #- STORAGE=thumbor.storages.mixed_storage
+      #- MIXED_STORAGE_FILE_STORAGE=thumbor.storages.file_storage
+      #- MIXED_STORAGE_DETECTOR_STORAGE=tc_redis.storages.redis_storage
+      #- RESULT_STORAGE=thumbor.result_storages.file_storage
+      # Cache storage settings
+      #
+      # storage keeps the original image files cached
+      - STORAGE_EXPIRATION_SECONDS=604800 # 1 week
+      # result storage keeps the image version files cached
+      - RESULT_STORAGE_EXPIRATION_SECONDS=14400 # 4 hours
+      - REDIS_STORAGE_SERVER_HOST=redis
+      - REDIS_STORAGE_SERVER_PORT=6379
+      - REDIS_STORAGE_SERVER_DB=0
+      - REDIS_QUEUE_SERVER_HOST=redis
+      - REDIS_QUEUE_SERVER_PORT=6379
+      - REDIS_QUEUE_SERVER_DB=0
+      - AUTO_WEBP=True
+    volumes:
+      - logs:/logs
+    deploy:
+      replicas: 1
+    links:
+      - redis:redis
+    restart: always
+  varnish:
+    image: varnish:stable
+    container_name: varnish
+    volumes:
+      - "./docker/varnish/default.vcl:/etc/varnish/default.vcl"
+    ports:
+      - "80:80"
+    tmpfs:
+      - /var/lib/varnish:exec
+    environment:
+      - VARNISH_SIZE=2G  
+    command: "-p default_keep=300"   
+    depends_on:
+      - "thumbor" 
+  redis:
+    image: redis:latest
+    deploy:
+      replicas: 1
+    restart: always
+volumes:
+  cache:
+    driver: local
+  logs:
+    driver: local
