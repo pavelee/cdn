@@ -5,6 +5,7 @@ import base64
 host = "http://localhost"
 query = "0x0/https://raw.githubusercontent.com/thumbor/thumbor/master/example.jpg"
 key = "ALAMAKOTA"
+port = 8080
 
 b_message = bytes(query, 'UTF8')
 b_key = bytes(key, 'UTF8')
@@ -16,4 +17,4 @@ hash = url_safe_sign.decode("utf-8")
 
 print('hash: %s' % hash)
 print('address below')
-print('%s/%s/%s' % (host, hash, query))
+print('%s:%s/%s/%s' % (host, port, hash, query))
