@@ -19,3 +19,6 @@ services:
       - /var/lib/varnish/varnishd:exec
     environment:
       - VARNISH_SIZE=2G  
+      - CLEAR_CACHE_KEY=ALAMAKOTA
+      - THUMBOR_SERVICE_NAME=thumbor
+      - THUMBOR_SERVICE_PORT=80
