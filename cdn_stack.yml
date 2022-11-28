@@ -1,0 +1,29 @@
+version: "3.2"
+
+services:
+    thumbor:
+        image: minimalcompact/thumbor
+        environment:
+            - THUMBOR_NUM_PROCESSES=4
+            - SECURITY_KEY=CHANGE_ME
+            - ALLOW_UNSAFE_URL=False
+            - RESULT_STORAGE=thumbor.result_storages.no_storage
+            - AUTO_WEBP=True
+        deploy:
+            replicas: 3
+            placement:
+                constraints:
+                    - node.role == worker
+    varnish:
+        image: thumbor-varnish
+        environment:
+            - VARNISH_SIZE=2G
+            - CLEAR_CACHE_KEY=CHANGE_ME
+            - THUMBOR_SERVICE_NAME=thumbor
+            - THUMBOR_SERVICE_PORT=80
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager
+        ports:
+            - "8080:80"
