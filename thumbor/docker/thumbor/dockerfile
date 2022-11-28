@@ -1,1 +1,1 @@
-FROM minimalcompact/thumbor
+FROM minimalcompact/thumbor:7.0.0
