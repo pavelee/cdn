@@ -4,7 +4,7 @@ import base64
 
 host = "http://localhost"
 query = "0x0/https://raw.githubusercontent.com/thumbor/thumbor/master/example.jpg"
-key = "ALAMAKOTA"
+key = "YOUR_SECURITY_KEY"
 port = 8080
 
 b_message = bytes(query, 'UTF8')
